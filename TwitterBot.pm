@@ -172,7 +172,7 @@ sub tick {
 	if ($len > 1) {
 		my $status;
 		my $i = 1;
-		while ($i < $len) {
+		while ($i <= $len) {
 			$self->say(
 					channel => $self->{channels}->[0],
 					body => $statuses[$len-$i]->{user}->{screen_name}." => ".$statuses[$len-$i]->{text}
