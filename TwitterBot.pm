@@ -15,7 +15,7 @@ use base qw( Bot::BasicBot );
 sub said {
 	my ($self, $msg) = @_;
 
-	return unless $msg->{body} ~= /^\@/;
+	return unless $msg->{body} =~ /^\@/;
 
 	# twitter link
 	my $twlk = Net::Twitter->new(
