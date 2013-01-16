@@ -169,7 +169,7 @@ sub tick {
 
 	# send each tweet to the IRC chan
 	my $len = scalar(@statuses);
-	if ($len > 1) {
+	if ($len > 0) {
 		my $status;
 		my $i = 1;
 		while ($i <= $len) {
