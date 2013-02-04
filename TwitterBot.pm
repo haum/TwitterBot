@@ -114,7 +114,7 @@ sub said {
 		}
 	}
 	# little help
-	if ($msg->{body} =~ /\@help (\w+)/) {		
+	if ($msg->{body} =~ /\@help/) {		
 		$self->say(
 			who => $msg->{who},
 			channel => $msg->{channel},
