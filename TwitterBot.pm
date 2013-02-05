@@ -37,7 +37,7 @@ sub said {
 
 	# if it's from a known nick and the length is OK...
 	if ($msg->{body} =~ /^\@tweet (.+)$/) {
-		if ($rdb->get($redis_pref.$msg->{who})) {
+		if ($rdb->get($redis_pref.":".$msg->{who})) {
 			if (length($1) > 140) {
 				$self->say(
 					who => $msg->{who},
@@ -121,7 +121,7 @@ sub said {
 			body => "Je suis un bot qui lie ce canal irc a twitter."
 		);
 		# if allowed to tweet
-	if ($rdb->get($redis_pref.$msg->{who})) {
+	if ($rdb->get($redis_pref.':'.$msg->{who})) {
 			$self->say(
 				who => $msg->{who},
 				channel => $msg->{channel},
