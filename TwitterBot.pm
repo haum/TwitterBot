@@ -85,7 +85,7 @@ sub said {
 				$self->say(
 					who => $msg->{who},
 					channel => $msg->{channel},
-					body => "Retweeté !"
+					body => "Retweet done !"
 				);
 				return;
 			}
