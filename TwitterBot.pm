@@ -67,6 +67,40 @@ sub said {
 		}
 	}
 
+	# retweet
+	if ($msg->{body} =~ /^\@retweet (\d+)$/) {
+		if ($rdb->get($redis_pref.$msg->{who})) {
+
+			# update twitter account...
+			eval { $twlk->retweet($1); };
+			if ( $@ ) {
+				$self->say(
+					who => $msg->{who},
+					channel => $msg->{channel},
+					body => "Ooops... un petit souci... [ ".$@->error." ]",
+					body => "ping ".$master
+				);
+				return;
+			} else {
+				$self->say(
+					who => $msg->{who},
+					channel => $msg->{channel},
+					body => "C'est parti !"
+				);
+				return;
+			}
+
+		# if poster's not in allowed nicks
+		} else {
+			$self->say(
+				who => $msg->{who},
+				channel => $msg->{channel},
+				body => "On se connait ?"
+			);
+			return;
+		}
+	}
+
 	# shrink links
 	# partly form ln-s.net ;) thanks to them
 	if ($msg->{body} =~ /^\@shrink (.+)$/) {
