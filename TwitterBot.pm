@@ -231,7 +231,7 @@ sub tick {
 		while ($i <= $len) {
 			$self->say(
 					channel => $self->{channels}->[0],
-					body => $statuses[$len-$i]->{user}->{screen_name}." => ".$statuses[$len-$i]->{text}
+					body => $statuses[$len-$i]->{user}->{screen_name}." => ".$statuses[$len-$i]->{text}." (#".$statuses[$len-$i]->{id_str}.")"
 			);
 			$i++;
 		}
