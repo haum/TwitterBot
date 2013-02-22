@@ -9,7 +9,7 @@ my $Twaum = TwitterBot->new(
 	token_secret => "",
 	# Redis
 	redis_db => 1,
-	redis_pref => "TwitterBot",
+	redis_pref => "TwitterBot:",
 	master => "JohnDoe",
 	# IRC
 	server => "irc.freenode.org",
