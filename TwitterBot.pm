@@ -136,7 +136,7 @@ sub said {
 	}
 	# add an user to the "known nicks" list
 	if (($msg->{who} eq $master) and $msg->{body} =~ /\@allow (\w+)/) {
-		$rdb->set($redis_pref.':'.$1, 1);
+		$rdb->set($redis_pref.$1, 1);
 		$self->say(
 			who => $master,
 			channel => $msg->{channel},
@@ -146,7 +146,7 @@ sub said {
 
 	# remove an user from the "known nicks" list
 	if (($msg->{who} eq $master) and $msg->{body} =~ /\@disallow (\w+)/) {
-		$rdb->del($redis_pref.':'.$1) if $rdb->get($redis_pref.$1);
+		$rdb->del($redis_pref.$1) if $rdb->get($redis_pref.$1);
 		$self->say(
 			who => $master,
 			channel => $msg->{channel},
@@ -179,7 +179,7 @@ sub tick {
 	$rdb->select($redis_db);
 
 	# get id of last mention read
-	my $last = $rdb->get($redis_pref.":last_twid");
+	my $last = $rdb->get($redis_pref."last_twid");
 	my @statuses;
 	if (!$last) {
 		@statuses = @{$twlk->mentions()};
@@ -201,7 +201,7 @@ sub tick {
 			$i++;
 		}
 
-		$rdb->set($redis_pref.":last_twid", $statuses[$len+1-$i]->{id});
+		$rdb->set($redis_pref."last_twid", $statuses[$len+1-$i]->{id});
 	}
 
 	# sleep 5 min ;)
