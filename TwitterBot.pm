@@ -114,25 +114,25 @@ sub said {
 		}
 	}
 	# little help
-	if ($msg->{body} =~ /\@help/) {		
+	if ($msg->{body} =~ /\@help/) {
 		$self->say(
 			who => $msg->{who},
 			channel => $msg->{channel},
 			body => "Je suis un bot qui lie ce canal irc a twitter."
 		);
-		
+
 		if ($msg->{who} eq $master) {
 		$self->say(
 			who => $msg->{who},
 			channel => $msg->{channel},
 			body => "\@allow [user] pour autoriser [user] a tweeter, \@disallow [user] pour enlever [user] de la liste des tweetants"
 		);
-		}	
+		}
 		$self->say(
 			who => $msg->{who},
 			channel => $msg->{channel},
 			body => "\@tweet [texte] pour twetter [texte], \@shrink [url] pour racourcir [URL]"
-		);		
+		);
 	}
 	# add an user to the "known nicks" list
 	if (($msg->{who} eq $master) and $msg->{body} =~ /\@allow (\w+)/) {
@@ -153,7 +153,7 @@ sub said {
 			body => "Adieu $1, je l'aimais bien"
 		);
 	}
-	
+
 }
 
 
