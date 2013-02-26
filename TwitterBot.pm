@@ -67,6 +67,40 @@ sub said {
 		}
 	}
 
+	# retweet
+	if ($msg->{body} =~ /^\@retweet (\d+)$/) {
+		if ($rdb->get($redis_pref.$msg->{who})) {
+
+			# update twitter account...
+			eval { $twlk->retweet($1); };
+			if ( $@ ) {
+				$self->say(
+					who => $msg->{who},
+					channel => $msg->{channel},
+					body => "Ooops... un petit souci... [ ".$@->error." ]",
+					body => "ping ".$master
+				);
+				return;
+			} else {
+				$self->say(
+					who => $msg->{who},
+					channel => $msg->{channel},
+					body => "Retweet done !"
+				);
+				return;
+			}
+
+		# if poster's not in allowed nicks
+		} else {
+			$self->say(
+				who => $msg->{who},
+				channel => $msg->{channel},
+				body => "On se connait ?"
+			);
+			return;
+		}
+	}
+
 	# shrink links
 	# partly form ln-s.net ;) thanks to them
 	if ($msg->{body} =~ /^\@shrink (.+)$/) {
@@ -118,22 +152,23 @@ sub said {
 		$self->say(
 			who => $msg->{who},
 			channel => $msg->{channel},
-			body => "Je suis un bot qui lie ce canal irc a twitter."
+			body => "Je suis un bot qui lie ce canal irc à twitter."
 		);
 
 		if ($msg->{who} eq $master) {
 		$self->say(
 			who => $msg->{who},
 			channel => $msg->{channel},
-			body => "\@allow [user] pour autoriser [user] a tweeter, \@disallow [user] pour enlever [user] de la liste des tweetants"
+			body => "\@allow [user] pour autoriser [user] à tweeter, \@disallow [user] pour enlever [user] de la liste des tweetants"
 		);
 		}
 		$self->say(
 			who => $msg->{who},
 			channel => $msg->{channel},
-			body => "\@tweet [texte] pour twetter [texte], \@shrink [url] pour racourcir [URL]"
+			body => "\@tweet [texte] pour twetter [texte], \@retweet [id] pour retweeter le tweet [id], \@shrink [url] pour racourcir [url]"
 		);
 	}
+
 	# add an user to the "known nicks" list
 	if (($msg->{who} eq $master) and $msg->{body} =~ /\@allow (\w+)/) {
 		$rdb->set($redis_pref.$1, 1);
@@ -196,7 +231,7 @@ sub tick {
 		while ($i <= $len) {
 			$self->say(
 					channel => $self->{channels}->[0],
-					body => $statuses[$len-$i]->{user}->{screen_name}." => ".$statuses[$len-$i]->{text}
+					body => $statuses[$len-$i]->{user}->{screen_name}." => ".$statuses[$len-$i]->{text}." (#".$statuses[$len-$i]->{id_str}.")"
 			);
 			$i++;
 		}
