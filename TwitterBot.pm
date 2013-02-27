@@ -67,6 +67,20 @@ sub said {
 		}
 	}
 
+	# @who
+	if ($msg->{body} =~ /^\@who\s*$/) {
+		my @keys = map {my @a = split(/:/); $_ = $a[1]} $rdb->keys('*'.$redis_pref.'*');
+		my $body = '';
+		foreach my $i (@keys) {
+			$body .= ' '.$i if ($i ne 'last_twid');
+		}
+
+		$self->say(
+			channel => $msg->{channel},
+			body => 'Les twolleurs :'.$body
+		);
+	}
+
 	# retweet
 	if ($msg->{body} =~ /^\@retweet (\d+)$/) {
 		if ($rdb->get($redis_pref.$msg->{who})) {
