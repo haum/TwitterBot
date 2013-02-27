@@ -67,6 +67,54 @@ sub said {
 		}
 	}
 
+	# @who
+	if ($msg->{body} =~ /^\@who\s*$/) {
+		my @keys = map {my @a = split(/:/); $_ = $a[1]} $rdb->keys('*'.$redis_pref.'*');
+		my $body = '';
+		foreach my $i (@keys) {
+			$body .= ' '.$i if ($i ne 'last_twid');
+		}
+
+		$self->say(
+			channel => $msg->{channel},
+			body => 'Les twolleurs :'.$body
+		);
+	}
+
+	# retweet
+	if ($msg->{body} =~ /^\@retweet (\d+)$/) {
+		if ($rdb->get($redis_pref.$msg->{who})) {
+
+			# update twitter account...
+			eval { $twlk->retweet($1); };
+			if ( $@ ) {
+				$self->say(
+					who => $msg->{who},
+					channel => $msg->{channel},
+					body => "Ooops... un petit souci... [ ".$@->error." ]",
+					body => "ping ".$master
+				);
+				return;
+			} else {
+				$self->say(
+					who => $msg->{who},
+					channel => $msg->{channel},
+					body => "Retweet done !"
+				);
+				return;
+			}
+
+		# if poster's not in allowed nicks
+		} else {
+			$self->say(
+				who => $msg->{who},
+				channel => $msg->{channel},
+				body => "On se connait ?"
+			);
+			return;
+		}
+	}
+
 	# shrink links
 	# partly form ln-s.net ;) thanks to them
 	if ($msg->{body} =~ /^\@shrink (.+)$/) {
@@ -114,32 +162,30 @@ sub said {
 		}
 	}
 	# little help
-	if ($msg->{body} =~ /\@help/) {		
+	if ($msg->{body} =~ /\@help/) {
 		$self->say(
 			who => $msg->{who},
 			channel => $msg->{channel},
-			body => "Je suis un bot qui lie ce canal irc a twitter."
+			body => "Je suis un bot qui lie ce canal irc à twitter."
 		);
-		# if allowed to tweet
-	if ($rdb->get($redis_pref.':'.$msg->{who})) {
-			$self->say(
-				who => $msg->{who},
-				channel => $msg->{channel},
-				body => "\@tweet [texte] pour twetter [texte], \@shrink [url] pour racourcir [URL]"
-			);
-		}
-		# if master	
+
 		if ($msg->{who} eq $master) {
-			$self->say(
-				who => $msg->{who},
-				channel => $msg->{channel},
-				body => "\@allow [user] pour autoriser [user] a tweeter, \@disallow [user] pour enlever [user] de la liste des tweetants"
-			);
+		$self->say(
+			who => $msg->{who},
+			channel => $msg->{channel},
+			body => "\@allow [user] pour autoriser [user] à tweeter, \@disallow [user] pour enlever [user] de la liste des tweetants"
+		);
 		}
+		$self->say(
+			who => $msg->{who},
+			channel => $msg->{channel},
+			body => "\@tweet [texte] pour twetter [texte], \@retweet [id] pour retweeter le tweet [id], \@shrink [url] pour racourcir [url]"
+		);
 	}
+
 	# add an user to the "known nicks" list
 	if (($msg->{who} eq $master) and $msg->{body} =~ /\@allow (\w+)/) {
-		$rdb->set($redis_pref.':'.$1, 1);
+		$rdb->set($redis_pref.$1, 1);
 		$self->say(
 			who => $master,
 			channel => $msg->{channel},
@@ -149,14 +195,14 @@ sub said {
 
 	# remove an user from the "known nicks" list
 	if (($msg->{who} eq $master) and $msg->{body} =~ /\@disallow (\w+)/) {
-		$rdb->del($redis_pref.':'.$1) if $rdb->get($redis_pref.$1);
+		$rdb->del($redis_pref.$1) if $rdb->get($redis_pref.$1);
 		$self->say(
 			who => $master,
 			channel => $msg->{channel},
 			body => "Adieu $1, je l'aimais bien"
 		);
 	}
-	
+
 }
 
 
@@ -182,7 +228,7 @@ sub tick {
 	$rdb->select($redis_db);
 
 	# get id of last mention read
-	my $last = $rdb->get($redis_pref.":last_twid");
+	my $last = $rdb->get($redis_pref."last_twid");
 	my @statuses;
 	if (!$last) {
 		@statuses = @{$twlk->mentions()};
@@ -199,12 +245,12 @@ sub tick {
 		while ($i <= $len) {
 			$self->say(
 					channel => $self->{channels}->[0],
-					body => $statuses[$len-$i]->{user}->{screen_name}." => ".$statuses[$len-$i]->{text}
+					body => $statuses[$len-$i]->{user}->{screen_name}." => ".$statuses[$len-$i]->{text}." (#".$statuses[$len-$i]->{id_str}.")"
 			);
 			$i++;
 		}
 
-		$rdb->set($redis_pref.":last_twid", $statuses[$len+1-$i]->{id});
+		$rdb->set($redis_pref."last_twid", $statuses[$len+1-$i]->{id});
 	}
 
 	# sleep 5 min ;)
