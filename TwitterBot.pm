@@ -1,5 +1,6 @@
 package TwitterBot;
 
+use utf8;
 use strict;
 use warnings;
 use 5.010;
@@ -37,6 +38,7 @@ sub said {
 
 	# if it's from a known nick and the length is OK...
 	if ($msg->{body} =~ /^\@tweet (.+)$/) {
+        utf8::encode($1) if(! utf8::is_utf8($1));
 		if ($rdb->get($redis_pref.$msg->{who})) {
 			if (length($1) > 140) {
 				$self->say(
