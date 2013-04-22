@@ -120,7 +120,7 @@ sub said {
 	# shrink links
 	# partly form ln-s.net ;) thanks to them
 	if ($msg->{body} =~ /^\@shrink (.+)$/) {
-		if ($rdb->get($redis_pref.':'.$msg->{who})) {
+		if ($rdb->get($redis_pref.$msg->{who})) {
 			# set up the LWP User Agent and create the request
 			my $userAgent = new LWP::UserAgent;
 			my $request = new HTTP::Request POST => 'http://ln-s.net/home/api.jsp';
