@@ -118,7 +118,7 @@ sub said {
   }
 
   # reply
-  if ($mdg->{body} =~ /^@reply (\d+) (.+)$/)
+  if ($msg->{body} =~ /^\@reply (\d+) (.+)$/)
   {
     utf8::encode($2) if(! utf8::is_utf8($2));
     if ($rdb->get($redis_pref.$msg->{who})) {
