@@ -132,7 +132,7 @@ sub said {
       }
 
       # update twitter account...
-      $twlk->update($2,$1);
+      $twlk->update($2,{in_reply_to_status_id => $1});
       $self->say(
         who => $msg->{who},
         channel => $msg->{channel},
