@@ -8,6 +8,7 @@ use LWP::UserAgent; # to shrink links
 use Bot::BasicBot;
 use Net::Twitter;
 use Redis; 			# for authorizations
+use Try::Tiny;
 
 # this class is now a bot !
 use base qw( Bot::BasicBot );
@@ -50,12 +51,20 @@ sub said {
       }
 
       # update twitter account...
-      $twlk->update($1);
-      $self->say(
-        who => $msg->{who},
-        channel => $msg->{channel},
-        body => "C'est parti !"
-      );
+	  try {
+		  $twlk->update($1);
+		  $self->say(
+			who => $msg->{who},
+			channel => $msg->{channel},
+			body => "C'est parti !"
+		  );
+	  } catch {
+		  $self->say(
+			  who => $msg->{who},
+			  channel => $msg->{channel},
+			  body => "Erreur : $_"
+		  );
+	  };
       return;
 
       # if poster's not in allowed nicks
