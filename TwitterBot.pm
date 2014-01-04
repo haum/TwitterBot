@@ -149,6 +149,40 @@ sub said {
     }
   }
 
+  # Delete a status by his 'id'
+  if ($msg->{body} =~ /^\@delete (\d+)$/) {
+    if ($rdb->get($redis_pref.$msg->{who})) {
+
+      # update twitter account...
+      eval { $twlk->destroy_status($1); };
+      if ( $@ ) {
+        $self->say(
+          who => $msg->{who},
+          channel => $msg->{channel},
+          body => "Ooops... un petit souci... [ ".$@->error." ]",
+          body => "ping ".$master
+        );
+        return;
+      } else {
+        $self->say(
+          who => $msg->{who},
+          channel => $msg->{channel},
+          body => "Status deleted successfully!"
+        );
+        return;
+      }
+
+      # if poster's not in allowed nicks
+    } else {
+      $self->say(
+        who => $msg->{who},
+        channel => $msg->{channel},
+        body => "On se connait ?"
+      );
+      return;
+    }
+  }
+
   # shrink links
   # partly form ln-s.net ;) thanks to them
   if ($msg->{body} =~ /^\@shrink (.+)$/) {
@@ -213,7 +247,7 @@ sub said {
     $self->say(
       who => $msg->{who},
       channel => $msg->{channel},
-      body => "\@tweet [texte] pour twetter [texte], \@retweet [id] pour retweeter le tweet [id], \@reply [id] [\@user_référencé texte], \@shrink [url] pour racourcir [url]"
+      body => "\@tweet [texte] pour twetter [texte], \@retweet [id] pour retweeter le tweet [id], \@reply [id] [\@user_référencé texte], \@delete [id] pour supprimer le status [id], \@shrink [url] pour racourcir [url]"
     );
   }
 
