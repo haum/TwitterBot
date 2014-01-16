@@ -22,6 +22,7 @@ sub said {
   # twitter link
   my $twlk = Net::Twitter->new(
     traits   => [qw/OAuth API::RESTv1_1/],
+	ssl 	 => 1,
     consumer_key        => $self->{consumer_key},
     consumer_secret     => $self->{consumer_secret},
     access_token        => $self->{token},
@@ -289,6 +290,7 @@ sub tick {
   # twitter link
   my $twlk = Net::Twitter->new(
     traits   => [qw/OAuth API::RESTv1_1/],
+	ssl 	 => 1,
     consumer_key        => $self->{consumer_key},
     consumer_secret     => $self->{consumer_secret},
     access_token        => $self->{token},
