@@ -39,7 +39,7 @@ sub said {
 
 
   # if it's from a known nick and the length is OK...
-  if ($msg->{body} =~ /^\@tweet (.+)$/) {
+  if ($msg->{body} =~ /^\@tweet\s*(.+)$/) {
     utf8::encode($1) if(! utf8::is_utf8($1));
     if ($rdb->get($redis_pref.$msg->{who})) {
       if (length($1) > 140) {
@@ -94,7 +94,7 @@ sub said {
   }
 
   # retweet
-  if ($msg->{body} =~ /^\@retweet (\d+)$/) {
+  if ($msg->{body} =~ /^\@retweet\s*(\d+)$/) {
     if ($rdb->get($redis_pref.$msg->{who})) {
 
       # update twitter account...
@@ -128,7 +128,7 @@ sub said {
   }
 
   # reply
-  if ($msg->{body} =~ /^\@reply (\d+) (.+)$/)
+  if ($msg->{body} =~ /^\@reply\s*(\d+)\s*(.+)$/)
   {
     utf8::encode($2) if(! utf8::is_utf8($2));
     if ($rdb->get($redis_pref.$msg->{who})) {
@@ -160,7 +160,7 @@ sub said {
   }
 
   # Delete a status by his 'id'
-  if ($msg->{body} =~ /^\@delete (\d+)$/) {
+  if ($msg->{body} =~ /^\@delete\s*(\d+)$/) {
     if ($rdb->get($redis_pref.$msg->{who})) {
 
       # update twitter account...
@@ -195,7 +195,7 @@ sub said {
 
   # shrink links
   # partly form ln-s.net ;) thanks to them
-  if ($msg->{body} =~ /^\@shrink (.+)$/) {
+  if ($msg->{body} =~ /^\@shrink\s*(.+)$/) {
     if ($rdb->get($redis_pref.$msg->{who})) {
       # set up the LWP User Agent and create the request
       my $userAgent = new LWP::UserAgent;
@@ -262,7 +262,7 @@ sub said {
   }
 
   # add an user to the "known nicks" list
-  if (($msg->{who} eq $master) and $msg->{body} =~ /\@allow (\w+)/) {
+  if (($msg->{who} eq $master) and $msg->{body} =~ /\@allow\s*(\w+)/) {
     $rdb->set($redis_pref.$1, 1);
     $self->say(
       who => $master,
@@ -272,7 +272,7 @@ sub said {
   }
 
   # remove an user from the "known nicks" list
-  if (($msg->{who} eq $master) and $msg->{body} =~ /\@disallow (\w+)/) {
+  if (($msg->{who} eq $master) and $msg->{body} =~ /\@disallow\s*(\w+)/) {
     $rdb->del($redis_pref.$1) if $rdb->get($redis_pref.$1);
     $self->say(
       who => $master,
