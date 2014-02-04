@@ -103,8 +103,7 @@ sub said {
         $self->say(
           who => $msg->{who},
           channel => $msg->{channel},
-          body => "Ooops... un petit souci... [ ".$@->error." ]",
-          body => "ping ".$master
+          body => "ping ".$master." il y a un petit souci... [ ".$@->error." ]",
         );
         return;
       } else {
@@ -169,8 +168,7 @@ sub said {
         $self->say(
           who => $msg->{who},
           channel => $msg->{channel},
-          body => "Ooops... un petit souci... [ ".$@->error." ]",
-          body => "ping ".$master
+          body => "ping ".$master." il y a un petit souci... [ ".$@->error." ]",
         );
         return;
       } else {
