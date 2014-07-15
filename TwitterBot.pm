@@ -94,13 +94,14 @@ sub said {
   }
 
   # retweet
-  if ($msg->{body} =~ /^\@retweet\s*(\d+)$/) {
+  if ($msg->{body} =~ /^\@retweet\s*(\w+)$/) {
     if ($rdb->get($redis_pref.$msg->{who})) {
 
       # update twitter account...
 	  my $twid;
-	  if ($1 eq 'last') {
+	  if ($1 eq "last") {
 		  $twid = $rdb->get($redis_pref."last_twid");
+		  print "YOP";
 	  } else {
 		  $twid = $1;
 	  }
