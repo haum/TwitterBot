@@ -94,11 +94,18 @@ sub said {
   }
 
   # retweet
-  if ($msg->{body} =~ /^\@retweet\s*(\d+)$/) {
+  if ($msg->{body} =~ /^\@retweet\s*(\w+)$/) {
     if ($rdb->get($redis_pref.$msg->{who})) {
 
       # update twitter account...
-      eval { $twlk->retweet($1); };
+	  my $twid;
+	  if ($1 eq "last") {
+		  $twid = $rdb->get($redis_pref."last_twid");
+		  print "YOP";
+	  } else {
+		  $twid = $1;
+	  }
+      eval { $twlk->retweet($twid); };
       if ( $@ ) {
         $self->say(
           who => $msg->{who},
@@ -278,6 +285,14 @@ sub said {
       body => "Adieu $1, je l'aimais bien"
     );
   }
+
+#  if ($msg->{body} =~ /https?:\/\/twitter\.com\/[^\/]+\/(\d*)[\/\s]/) {
+#	my $tweet = $twlk->show_status($1);
+#	$self->say(
+#		channel => $msg->{channel},
+#		body => $tweet->{user}->{screen_name}." => ".$tweet->{text}." (id: ".$tweet->{id_str}." )"
+#	);
+#  }
 }
 
 
