@@ -94,7 +94,7 @@ sub said {
   }
 
   # retweet
-  if ($msg->{body} =~ /^\@retweet\s*(\w+)$/) {
+  if ($msg->{body} =~ /^\@retweet\s*(\d+|last)$/) {
     if ($rdb->get($redis_pref.$msg->{who})) {
 
       # update twitter account...
