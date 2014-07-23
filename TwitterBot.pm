@@ -101,7 +101,6 @@ sub said {
 	  my $twid;
 	  if ($1 eq "last") {
 		  $twid = $rdb->get($redis_pref."last_twid");
-		  print "YOP";
 	  } else {
 		  $twid = $1;
 	  }
