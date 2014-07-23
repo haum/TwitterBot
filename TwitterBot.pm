@@ -133,10 +133,18 @@ sub said {
   }
 
   # reply
-  if ($msg->{body} =~ /^\@reply\s*(\d+)\s*(.+)$/)
+  if ($msg->{body} =~ /^\@reply\s*(\d+|last)\s*(.+)$/)
   {
     utf8::encode($2) if(! utf8::is_utf8($2));
+
     if ($rdb->get($redis_pref.$msg->{who})) {
+	  # update twitter account...
+	  my $twid;
+	  if ($1 eq "last") {
+	  	$twid = $rdb->get($redis_pref."last_twid");
+	  } else {
+	  	$twid = $1;
+	  }
       if (length($2) > 140) {
         $self->say(
           who => $msg->{who},
