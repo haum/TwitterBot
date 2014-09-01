@@ -149,7 +149,7 @@ sub said {
         $self->say(
           who => $msg->{who},
           channel => $msg->{channel},
-          body => "Un peu long, ".length($1)." au lieu de 140..."
+          body => "Un peu long, ".length($2)." au lieu de 140..."
         );
         return;
       }
