@@ -57,7 +57,7 @@ sub said {
 		  $self->say(
 			who => $msg->{who},
 			channel => $msg->{channel},
-			body => "C'est parti ! (id: ".$status->{id_str}.")"
+			body => "C'est parti ! ( https://twitter.com/manuelvalls/status/".$status->{id_str}." )"
 		  );
 	  } catch {
 		  $self->say(
@@ -111,12 +111,14 @@ sub said {
           channel => $msg->{channel},
           body => "ping ".$master." il y a un petit souci... [ ".$@->error." ]",
         );
+		use Data::Dumper;
+		print(Dumper($@));
         return;
       } else {
         $self->say(
           who => $msg->{who},
           channel => $msg->{channel},
-          body => "Retweet done !"
+          body => "Retweet done ! https://twitter.com/bcazeneuve/status/".$twid
         );
         return;
       }
@@ -156,6 +158,11 @@ sub said {
 
       # update twitter account...
       my $status = $twlk->update($2,{in_reply_to_status_id => $1});
+	  $self->say(
+		  who => $msg->{who},
+		  channel => $msg->{channel},
+		  body => "On répond à https://twitter.com/RoyalSegolene/status/".$1
+	  );
       $self->say(
         who => $msg->{who},
         channel => $msg->{channel},
