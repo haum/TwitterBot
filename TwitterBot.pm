@@ -157,11 +157,11 @@ sub said {
       }
 
       # update twitter account...
-      my $status = $twlk->update($2,{in_reply_to_status_id => $1});
+      my $status = $twlk->update($2,{in_reply_to_status_id => $twid});
 	  $self->say(
 		  who => $msg->{who},
 		  channel => $msg->{channel},
-		  body => "On répond à https://twitter.com/RoyalSegolene/status/".$1
+		  body => "On répond à https://twitter.com/RoyalSegolene/status/".$twid
 	  );
       $self->say(
         who => $msg->{who},
