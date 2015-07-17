@@ -350,7 +350,7 @@ sub tick {
     while ($i <= $len) {
       $self->say(
         channel => $self->{channels}->[0],
-        body => $statuses[$len-$i]->{user}->{screen_name}." => ".$statuses[$len-$i]->{text}." (id: ".$statuses[$len-$i]->{id_str}." )"
+        body => $statuses[$len-$i]->{user}->{screen_name}." => ".$statuses[$len-$i]->{text}." ( https://twitter.com/JY_LeDrian/status/".$statuses[$len-$i]->{id_str}." )"
       );
       $i++;
     }
