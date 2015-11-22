@@ -57,7 +57,7 @@ sub said {
 		  $self->say(
 			who => $msg->{who},
 			channel => $msg->{channel},
-			body => "C'est parti ! ( https://twitter.com/manuelvalls/status/".$status->{id_str}." )"
+			body => "C'est parti ! ( https://twitter.com/manuelvalls/status/".$status->{id_str}." ) ID : ".$status->{id_str}
 		  );
 	  } catch {
 		  $self->say(
@@ -118,7 +118,7 @@ sub said {
         $self->say(
           who => $msg->{who},
           channel => $msg->{channel},
-          body => "Retweet done ! https://twitter.com/bcazeneuve/status/".$twid
+          body => "Retweet done ! ( https://twitter.com/bcazeneuve/status/".$twid." ) ID : ".$twid
         );
         return;
       }
@@ -166,7 +166,7 @@ sub said {
       $self->say(
         who => $msg->{who},
         channel => $msg->{channel},
-        body => "C'est parti ! (id: ".$status->{id_str}.")"
+        body => "C'est parti ! (id: ".$status->{id_str}.") ID : ".$status->{id_str}
       );
       return;
     } else {
