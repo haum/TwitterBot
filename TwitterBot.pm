@@ -32,7 +32,8 @@ sub said {
   # redis link
   my $redis_db = $self->{redis_db};
   my $redis_pref = $self->{redis_pref};
-  my $master = $self->{master};
+  my @masters = $self->{masters};
+	my $masters_str = join ', ',@masters;
 
   my $rdb = Redis->new();
   $rdb->select($redis_db);
@@ -109,7 +110,7 @@ sub said {
         $self->say(
           who => $msg->{who},
           channel => $msg->{channel},
-          body => "ping ".$master." il y a un petit souci... [ ".$@->error." ]",
+          body => "ping ".$masters_str." il y a un petit souci... [ ".$@->error." ]",
         );
 		use Data::Dumper;
 		print(Dumper($@));
@@ -189,7 +190,7 @@ sub said {
         $self->say(
           who => $msg->{who},
           channel => $msg->{channel},
-          body => "ping ".$master." il y a un petit souci... [ ".$@->error." ]",
+          body => "ping ".$masters_str." il y a un petit souci... [ ".$@->error." ]",
         );
         return;
       } else {
@@ -266,7 +267,7 @@ sub said {
       body => "Je suis un bot qui lie ce canal irc à twitter."
     );
 
-    if ($msg->{who} eq $master) {
+    if ($msg->{who} ~~ @masters) {
       $self->say(
         who => $msg->{who},
         channel => $msg->{channel},
@@ -281,20 +282,20 @@ sub said {
   }
 
   # add an user to the "known nicks" list
-  if (($msg->{who} eq $master) and $msg->{body} =~ /\@allow\s*(\w+)/) {
+  if (($msg->{who} ~~ @masters) and $msg->{body} =~ /\@allow\s*(\w+)/) {
     $rdb->set($redis_pref.$1, 1);
     $self->say(
-      who => $master,
+      who => $msg->{who},
       channel => $msg->{channel},
       body => "Ok ! $1 est maintenant dans la liste des twolls potentiels :3"
     );
   }
 
   # remove an user from the "known nicks" list
-  if (($msg->{who} eq $master) and $msg->{body} =~ /\@disallow\s*(\w+)/) {
+  if (($msg->{who} ~~ @masters) and $msg->{body} =~ /\@disallow\s*(\w+)/) {
     $rdb->del($redis_pref.$1) if $rdb->get($redis_pref.$1);
     $self->say(
-      who => $master,
+      who => $msg->{who},
       channel => $msg->{channel},
       body => "Adieu $1, je l'aimais bien"
     );
@@ -327,7 +328,6 @@ sub tick {
   # redis link
   my $redis_db = $self->{redis_db};
   my $redis_pref = $self->{redis_pref};
-  my $master = $self->{master};
 
   my $rdb = Redis->new();
   $rdb->select($redis_db);
