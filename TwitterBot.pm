@@ -32,8 +32,8 @@ sub said {
   # redis link
   my $redis_db = $self->{redis_db};
   my $redis_pref = $self->{redis_pref};
-  my @masters = $self->{masters};
-	my $masters_str = join ', ',@masters;
+  my $masters = $self->{masters};
+	my $masters_str = join ', ',@$masters;
 
   my $rdb = Redis->new();
   $rdb->select($redis_db);
@@ -267,7 +267,7 @@ sub said {
       body => "Je suis un bot qui lie ce canal irc à twitter."
     );
 
-    if ($msg->{who} ~~ @masters) {
+    if ($msg->{who} ~~ $masters) {
       $self->say(
         who => $msg->{who},
         channel => $msg->{channel},
@@ -282,7 +282,7 @@ sub said {
   }
 
   # add an user to the "known nicks" list
-  if (($msg->{who} ~~ @masters) and $msg->{body} =~ /\@allow\s*(\w+)/) {
+  if (($msg->{who} ~~ $masters) and $msg->{body} =~ /\@allow\s*(\w+)/) {
     $rdb->set($redis_pref.$1, 1);
     $self->say(
       who => $msg->{who},
@@ -292,7 +292,7 @@ sub said {
   }
 
   # remove an user from the "known nicks" list
-  if (($msg->{who} ~~ @masters) and $msg->{body} =~ /\@disallow\s*(\w+)/) {
+  if (($msg->{who} ~~ $masters) and $msg->{body} =~ /\@disallow\s*(\w+)/) {
     $rdb->del($redis_pref.$1) if $rdb->get($redis_pref.$1);
     $self->say(
       who => $msg->{who},

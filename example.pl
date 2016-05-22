@@ -10,7 +10,7 @@ my $Twaum = TwitterBot->new(
 	# Redis
 	redis_db => 1,
 	redis_pref => "TwitterBot:",
-	masters => qw/JohnDoe LetoAtreides/,
+	masters => ["JohnDoe" "LetoAtreides"],
 	# IRC
 	server => "irc.freenode.org",
 	port => 7000,
