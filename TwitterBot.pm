@@ -43,11 +43,11 @@ sub said {
   if ($msg->{body} =~ /^\@tweet\s*(.+)$/) {
     utf8::encode($1) if(! utf8::is_utf8($1));
     if ($rdb->get($redis_pref.$msg->{who})) {
-      if (length($1) > 140) {
+      if (length($1) > 280) {
         $self->say(
           who => $msg->{who},
           channel => $msg->{channel},
-          body => "Un peu long, ".length($1)." au lieu de 140..."
+          body => "Un peu long, ".length($1)." au lieu de 280..."
         );
         return;
       }
@@ -148,11 +148,11 @@ sub said {
 	  } else {
 	  	$twid = $1;
 	  }
-      if (length($2) > 140) {
+      if (length($2) > 280) {
         $self->say(
           who => $msg->{who},
           channel => $msg->{channel},
-          body => "Un peu long, ".length($2)." au lieu de 140..."
+          body => "Un peu long, ".length($2)." au lieu de 280..."
         );
         return;
       }
